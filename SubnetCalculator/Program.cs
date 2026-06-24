@@ -5,6 +5,16 @@ string[] splits;
 string ipAdd;
 int cidr;
 bool isCidrValid;
+int firstOct;
+int secondOct;
+int thirdOct;
+int fourthOct;
+int blockSize;
+int networkOct;
+string netAdd;
+string[] ipOct;
+int broadOct;
+string broadAdd;
 
 //Keep asking for input until a valid IP address and CIDR are provided.
 while (true)
@@ -27,6 +37,7 @@ while (true)
     }
 
     ipAdd = splits[0];
+
 
     //Validate that the IPv4 address is correctly formatted.
     if (!IsIpValid(ipAdd))
@@ -58,11 +69,30 @@ while (true)
 int host = UsableHost(cidr);
 int nNetwork = NumberOfNetworks(cidr);
 
+ipOct = ipAdd.Split(".");
+
+firstOct = int.Parse(ipOct[0]);
+secondOct = int.Parse(ipOct[1]);
+thirdOct = int.Parse(ipOct[2]);
+fourthOct = int.Parse(ipOct[3]);
+
+blockSize = 256 / nNetwork;
+
+networkOct = (fourthOct / blockSize) * blockSize;
+netAdd = firstOct + "." + secondOct + "." + thirdOct + "." + networkOct;
+
+broadOct = networkOct + blockSize - 1;
+broadAdd = firstOct + "." + secondOct + "." + thirdOct + "." + broadOct;
+
+
+
+
 Console.WriteLine("IP Address: " + ipAdd + "\nCIDR: " + cidr);
 
 Console.WriteLine("Number of networks: " + nNetwork);
 Console.WriteLine("Number of usable hosts: " + host);
-
+Console.WriteLine("Network address: " + netAdd);
+Console.WriteLine("Boradcast address: " + broadAdd);
 static int UsableHost(int cidr){
 
     return (int)Math.Pow(2, 32 - cidr) -2;
