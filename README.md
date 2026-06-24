@@ -19,8 +19,8 @@ A simple subnet calculator written in C#.
 
 ## Future Improvements
 
-- Calculate network address
-- Calculate broadcast address
+- ~~Calculate network address~~
+- ~~Calculate broadcast address~~
 - Calculate first and last host
 - Display the subnet containing the given IP
 
