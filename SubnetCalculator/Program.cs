@@ -1,20 +1,15 @@
 ﻿using System;
 
 string userip;
-string[] splits;
+string[] splits, ipOct;
 string ipAdd;
 int cidr;
 bool isCidrValid;
-int firstOct;
-int secondOct;
-int thirdOct;
-int fourthOct;
+int firstOct, secondOct, thirdOct, fourthOct, networkOct, broadOct;
 int blockSize;
-int networkOct;
-string netAdd;
-string[] ipOct;
-int broadOct;
-string broadAdd;
+string netAdd, broadAdd;
+int firstUsableOct, lastUsableOct;
+string firstUsableHost, lastUsableHost;
 
 //Keep asking for input until a valid IP address and CIDR are provided.
 while (true)
@@ -78,13 +73,19 @@ fourthOct = int.Parse(ipOct[3]);
 
 blockSize = 256 / nNetwork;
 
+//Checking for the network and broadcast addresses
 networkOct = (fourthOct / blockSize) * blockSize;
 netAdd = firstOct + "." + secondOct + "." + thirdOct + "." + networkOct;
 
 broadOct = networkOct + blockSize - 1;
 broadAdd = firstOct + "." + secondOct + "." + thirdOct + "." + broadOct;
 
+//Looking for the first and last usable host
+firstUsableOct = networkOct + 1;
+lastUsableOct = broadOct - 1;
 
+firstUsableHost = firstOct + "." + secondOct + "." + thirdOct + "." + firstUsableOct;
+lastUsableHost = firstOct + "." + secondOct + "." + thirdOct + "." + lastUsableOct;
 
 
 Console.WriteLine("IP Address: " + ipAdd + "\nCIDR: " + cidr);
@@ -92,7 +93,9 @@ Console.WriteLine("IP Address: " + ipAdd + "\nCIDR: " + cidr);
 Console.WriteLine("Number of networks: " + nNetwork);
 Console.WriteLine("Number of usable hosts: " + host);
 Console.WriteLine("Network address: " + netAdd);
-Console.WriteLine("Boradcast address: " + broadAdd);
+Console.WriteLine("Broadcast address: " + broadAdd);
+Console.WriteLine("First usable host: " + firstUsableHost);
+Console.WriteLine("Last usable host: " + lastUsableHost);
 static int UsableHost(int cidr){
 
     return (int)Math.Pow(2, 32 - cidr) -2;
