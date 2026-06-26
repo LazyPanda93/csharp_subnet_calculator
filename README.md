@@ -4,11 +4,14 @@ A simple subnet calculator written in C#.
 
 ## Features
 
-- Validates IPv4 addresses
-- Validates CIDR notation
-- Calculates the number of subnets
-- Calculates the number of usable hosts per subnet
-- Handles invalid user input
+- Validate IPv4 addresses
+- Validate CIDR notation (/24–/30)
+- Calculate the number of networks
+- Calculate the number of usable hosts
+- Calculate the network address
+- Calculate the broadcast address
+- Calculate the first usable host
+- Calculate the last usable host
 
 ## Technologies Used
 
@@ -21,8 +24,8 @@ A simple subnet calculator written in C#.
 
 - ~~Calculate network address~~
 - ~~Calculate broadcast address~~
-- Calculate first and last host
-- Display the subnet containing the given IP
+- ~~Calculate first and last host~~
+- Support all valid CIDR ranges (/1 to /30)
 
 ## Author
 
