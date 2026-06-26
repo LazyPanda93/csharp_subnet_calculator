@@ -74,18 +74,18 @@ fourthOct = int.Parse(ipOct[3]);
 blockSize = 256 / nNetwork;
 
 //Checking for the network and broadcast addresses
-networkOct = (fourthOct / blockSize) * blockSize;
-netAdd = firstOct + "." + secondOct + "." + thirdOct + "." + networkOct;
+networkOct = CalculateNetworkOctet(fourthOct, blockSize);
+netAdd = BuildIpAdd(firstOct, secondOct,thirdOct, networkOct);
 
-broadOct = networkOct + blockSize - 1;
-broadAdd = firstOct + "." + secondOct + "." + thirdOct + "." + broadOct;
+broadOct = CalculateBroadOctet(networkOct, blockSize);
+broadAdd = BuildIpAdd(firstOct, secondOct, thirdOct, broadOct);
 
 //Looking for the first and last usable host
 firstUsableOct = networkOct + 1;
 lastUsableOct = broadOct - 1;
 
-firstUsableHost = firstOct + "." + secondOct + "." + thirdOct + "." + firstUsableOct;
-lastUsableHost = firstOct + "." + secondOct + "." + thirdOct + "." + lastUsableOct;
+firstUsableHost = BuildIpAdd(firstOct, secondOct, thirdOct,firstUsableOct);
+lastUsableHost = BuildIpAdd(firstOct, secondOct, thirdOct, lastUsableOct);
 
 
 Console.WriteLine("IP Address: " + ipAdd + "\nCIDR: " + cidr);
@@ -96,7 +96,8 @@ Console.WriteLine("Network address: " + netAdd);
 Console.WriteLine("Broadcast address: " + broadAdd);
 Console.WriteLine("First usable host: " + firstUsableHost);
 Console.WriteLine("Last usable host: " + lastUsableHost);
-static int UsableHost(int cidr){
+static int UsableHost(int cidr)
+{
 
     return (int)Math.Pow(2, 32 - cidr) -2;
 }
@@ -129,4 +130,20 @@ static bool IsIpValid(string ip)
         }
     }
     return true;
+}
+
+//Creating a method to multiuse for all network octet calculation
+static int CalculateNetworkOctet(int ipOctet, int bSize)
+{
+    return (ipOctet / bSize) * bSize;
+}
+
+static int CalculateBroadOctet(int netwOctet, int bSize)
+{
+    return netwOctet + bSize - 1;
+}
+
+static string BuildIpAdd(int fOct, int sOct, int tOct, int lOct)
+{
+    return fOct + "." + sOct + "." + tOct + "." + lOct;
 }
