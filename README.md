@@ -5,13 +5,13 @@ A simple subnet calculator written in C#.
 ## Features
 
 - Validate IPv4 addresses
-- Validate CIDR notation (/24–/30)
+- Validate CIDR notation (/1–/30)
 - Calculate the number of networks
 - Calculate the number of usable hosts
 - Calculate the network address
 - Calculate the broadcast address
-- Calculate the first usable host
-- Calculate the last usable host
+- ~~Calculate the first usable host~~
+- ~~Calculate the last usable host~~
 
 ## Technologies Used
 
