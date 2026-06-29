@@ -8,8 +8,8 @@ bool isCidrValid;
 int firstOct, secondOct, thirdOct, fourthOct, networkOct, broadOct;
 int blockSize;
 string netAdd, broadAdd;
-int firstUsableOct, lastUsableOct;
-string firstUsableHost, lastUsableHost;
+int /*firstUsableOct, lastUsableOct,*/ selectOct;
+//string firstUsableHost, lastUsableHost;
 
 //Keep asking for input until a valid IP address and CIDR are provided.
 while (true)
@@ -51,18 +51,24 @@ while (true)
         continue;
     }
 
-    if (cidr < 24 || cidr > 30)
+    if (cidr < 1 || cidr > 30)
     {
-        Console.WriteLine("CIDR must be between 24 and 30.");
+        Console.WriteLine("CIDR must be between 1 and 30.");
         continue;
     }
 
     break;
 }
 
+int interestOct = GetOctet(cidr);
 
 int host = UsableHost(cidr);
-int nNetwork = NumberOfNetworks(cidr);
+int nNetwork = cidr % 8;
+
+if (nNetwork == 0)
+{
+    nNetwork = 8;
+}
 
 ipOct = ipAdd.Split(".");
 
@@ -71,40 +77,69 @@ secondOct = int.Parse(ipOct[1]);
 thirdOct = int.Parse(ipOct[2]);
 fourthOct = int.Parse(ipOct[3]);
 
-blockSize = 256 / nNetwork;
+if (interestOct == 1)
+{
+    selectOct = firstOct;   
+}
+else if (interestOct == 2)
+{
+    selectOct = secondOct;
+}
+else if (interestOct == 3)
+{
+    selectOct = thirdOct;
+}
+else 
+    selectOct = fourthOct;
+
+blockSize = (int)Math.Pow(2, 8 - nNetwork);
 
 //Checking for the network and broadcast addresses
-networkOct = CalculateNetworkOctet(fourthOct, blockSize);
-netAdd = BuildIpAdd(firstOct, secondOct,thirdOct, networkOct);
+networkOct = CalculateNetworkOctet(selectOct, blockSize);
+//netAdd = BuildIpAdd(firstOct, secondOct,thirdOct, networkOct);
 
 broadOct = CalculateBroadOctet(networkOct, blockSize);
-broadAdd = BuildIpAdd(firstOct, secondOct, thirdOct, broadOct);
+
+if (interestOct == 1)
+{
+    netAdd = BuildIpAdd(networkOct, 0, 0, 0);
+    broadAdd = BuildIpAdd(broadOct, 255, 255, 255);
+}
+else if (interestOct == 2)
+{
+    netAdd = BuildIpAdd(firstOct, networkOct, 0, 0);
+    broadAdd = BuildIpAdd(firstOct, broadOct, 255, 255);
+}
+else if (interestOct == 3)
+{
+    netAdd = BuildIpAdd(firstOct, secondOct, networkOct, 0);
+    broadAdd = BuildIpAdd(firstOct, secondOct, broadOct, 255);
+}
+else
+{
+    netAdd = BuildIpAdd(firstOct, secondOct, thirdOct, networkOct);
+    broadAdd = BuildIpAdd(firstOct, secondOct, thirdOct, broadOct);
+}
 
 //Looking for the first and last usable host
-firstUsableOct = networkOct + 1;
+/*firstUsableOct = networkOct + 1;
 lastUsableOct = broadOct - 1;
 
-firstUsableHost = BuildIpAdd(firstOct, secondOct, thirdOct,firstUsableOct);
+firstUsableHost = BuildIpAdd(firstOct, secondOct, thirdOct, firstUsableOct);
 lastUsableHost = BuildIpAdd(firstOct, secondOct, thirdOct, lastUsableOct);
-
-
+*/
 Console.WriteLine("IP Address: " + ipAdd + "\nCIDR: " + cidr);
 
-Console.WriteLine("Number of networks: " + nNetwork);
+//Console.WriteLine("Number of networks: " + nNetwork);
 Console.WriteLine("Number of usable hosts: " + host);
 Console.WriteLine("Network address: " + netAdd);
 Console.WriteLine("Broadcast address: " + broadAdd);
-Console.WriteLine("First usable host: " + firstUsableHost);
-Console.WriteLine("Last usable host: " + lastUsableHost);
+//Console.WriteLine("First usable host: " + firstUsableHost);
+//Console.WriteLine("Last usable host: " + lastUsableHost);
 static int UsableHost(int cidr)
 {
 
     return (int)Math.Pow(2, 32 - cidr) -2;
-}
-
-static int NumberOfNetworks(int cidr)
-{
-    return (int)Math.Pow(2, cidr - 24);
 }
 
 //Verify that the IPv4 address contains four valid octets.
@@ -146,4 +181,9 @@ static int CalculateBroadOctet(int netwOctet, int bSize)
 static string BuildIpAdd(int fOct, int sOct, int tOct, int lOct)
 {
     return fOct + "." + sOct + "." + tOct + "." + lOct;
+}
+
+static int GetOctet(int nCidr)
+{
+    return (nCidr / 8) + 1;
 }
